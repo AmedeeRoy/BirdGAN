@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pickle
 from scipy.interpolate import  splrep, splev
 import scipy.stats as st
+import scipy.signal
 
 
 R = 6377726
@@ -153,8 +154,7 @@ def kde2d(data, bw=0.5):
     foraging_area = np.reshape(kernel(positions).T, xx.shape)
     return xx, yy, foraging_area
 
-def get_score(data, data_fake):
-
+def get_distribution(data, data_fake):
 
     plt.figure(figsize = (15,10))
 
@@ -245,3 +245,56 @@ def get_score(data, data_fake):
     # score_foraging_times = np.sum((dy_false/np.sum(dy_false) - dy/np.sum(dy))**2) / np.sum( (dy/np.sum(dy))**2)
 
 #     return  [score_daily_dist, score_foraging_duration]
+
+def get_periodogram(traj):
+    periodogram_lon = []
+    periodogram_lat = []
+
+    for j in range(traj.shape[0]):
+        lon = traj[j, 0, :]
+        lat = traj[j, 1, :]
+        x, lon = scipy.signal.periodogram(lon, scaling = 'spectrum', detrend = False)
+        x, lat = scipy.signal.periodogram(lat, scaling = 'spectrum', detrend = False)
+
+        periodogram_lon.append(lon)
+        periodogram_lat.append(lat)
+
+    return (x, np.array(periodogram_lon), np.array(periodogram_lat))
+
+
+def get_score(traj, traj_sim, plot=False):
+  x, lon, lat = get_periodogram(traj)
+  x, lon_GAN, lat_GAN = get_periodogram(traj_sim)
+
+  d_lon = np.log(np.mean(lon, axis=0)/np.mean(lon_GAN, axis=0))**2
+  d_lat = np.log(np.mean(lat, axis=0)/np.mean(lat_GAN, axis=0))**2
+
+  if plot:
+    plt.figure(figsize = (12,6))
+
+    plt.subplot(1,2,1)
+    plt.loglog(x, np.mean(lon, axis=0), linewidth = 3, linestyle = '--')
+    plt.fill_between(x, np.mean(lon, axis=0) - 0.5 * np.std(lon, axis=0) ,
+                    np.mean(lon, axis=0) + 0.5 * np.std(lon, axis=0),
+                    alpha = 0.2)
+
+
+    plt.loglog(x, np.mean(lon_GAN, axis=0), linewidth = 2)
+    plt.title('Longitude')
+
+    plt.subplot(1,2,2)
+    plt.loglog(x, np.mean(lat, axis=0), linewidth = 3, linestyle = '--', label = 'True')
+    plt.fill_between(x, np.mean(lat, axis=0) - 0.5 * np.std(lat, axis=0) ,
+                    np.mean(lat, axis=0) + 0.5 * np.std(lat, axis=0),
+                    alpha = 0.2)
+
+    plt.loglog(x, np.mean(lat_GAN, axis=0), linewidth = 2, label = 'GAN')
+
+    # plt.xlim([0, 0.5])
+    # plt.ylim([1e-6, 1e1])
+    plt.legend()
+    plt.title('Latitude')
+
+    plt.show()
+
+  return np.mean(d_lon + d_lat)/2
