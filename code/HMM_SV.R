@@ -1,7 +1,7 @@
 library(momentuHMM)
 library(plot3D)
 
-SVtracks <- read.csv("./../../data/trips_SV_2008_formatted.csv", stringsAsFactors = FALSE)
+SVtracks <- read.csv("../data/trips_SV_200_steps.csv", stringsAsFactors = FALSE)
 
 ## select few tracks
 colnames(SVtracks) <- c("ID", "lon", "lat")
@@ -125,7 +125,7 @@ m4 <- fitHMM(data=data, nbStates=3, dist=list(step="gamma",angle="vm"),
 
 AIC(m1,m2,m3,m4)
 
-### LOAD GEBCO
+### LOAD GEBCO  
 
 library(ncdf4)
 
@@ -174,7 +174,8 @@ TRAJ <- NULL
 kk <- 1
 while (kk <= 100){
 
-theta <- runif(1, pi/2, 3*pi/2)
+theta <-  sample(theta_all, 1)
+# theta <- runif(1, pi/2, 3*pi/2)
 
 Par <- getPar0(m4)
 newdata <- simData(nbAnimals = 1, 
@@ -269,4 +270,4 @@ if ( nb < 10){
 
 }
 
-# write.csv(TRAJ, file = '../results/sim_HMM_SV_2008.csv')
+write.csv(TRAJ, file = '../results/sim_HMM_SV.csv')

@@ -1,7 +1,7 @@
 library(momentuHMM)
 library(plot3D)
 
-SDtracks <- read.csv("./../../data/trips_SD_formatted.csv", stringsAsFactors = FALSE)
+SDtracks <- read.csv("../data/trips_SD_200_steps.csv", stringsAsFactors = FALSE)
 SDtracks[seq(1,nrow(SDtracks), by = 4),]
 
 ## select few tracks
@@ -25,10 +25,10 @@ stateNames <- c("search","forage", "rest", "inbound")
 
 # initial parameters
 zeroMass <- mean(data$step == 0, na.rm = TRUE)
-stepPar0 <- c(0.4, 0.2, 0.07, 1.3,
-              0.4, 0.1, 0.02,0.5,
+stepPar0 <- c(3, 0.8, 0.2, 4,
+              1, 0.7, 0.04,1,
               zeroMass, zeroMass, zeroMass, zeroMass)
-anglePar0 <- c(1, 0.5, 0.05,3)
+anglePar0 <- c(10, 0.9, 10,3)
 
 
 # constrain transition probabilities
@@ -141,11 +141,11 @@ for (id in unique(data$ID)){
 }
 
 TRAJ <- NULL
-
 kk <- 1
 while (kk <= 100){
 
-theta <- runif(1, -pi, pi)
+theta <-  sample(theta_all, 1)
+# theta <- runif(1, -pi, pi)
 
 Par <- getPar0(m4)
 newdata <- simData(nbAnimals = 1, 
@@ -164,7 +164,7 @@ newdata <- simData(nbAnimals = 1,
                    centers = matrix(c(0,0),nrow=1,dimnames=list("colony")),
                    stateNames = stateNames,
                    states = TRUE,
-                   obsPerAnimal = 500)
+                   obsPerAnimal = 200)
 
 X <- newdata$x * cos(theta) - newdata$y * sin(theta)
 Y <- newdata$x * sin(theta) + newdata$y * cos(theta)
@@ -180,4 +180,4 @@ TRAJ <- rbind(TRAJ, traj)
   kk <- kk + 1
 }
 
-# write.csv(TRAJ, file = '../results/sim_HMM_SV_2008.csv')
+write.csv(TRAJ, file = '../results/sim_HMM_SD.csv')
