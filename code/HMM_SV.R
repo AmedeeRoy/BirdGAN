@@ -123,6 +123,8 @@ m4 <- fitHMM(data=data, nbStates=3, dist=list(step="gamma",angle="vm"),
 
 # plot(m4)
 
+viterbi(m4)
+
 AIC(m1,m2,m3,m4)
 
 ### LOAD GEBCO  
