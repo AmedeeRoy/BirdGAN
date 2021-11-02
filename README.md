@@ -26,5 +26,5 @@ Code for the paper are available in the **code** folder :
 
 # Tutorial 
 
-A tutorial notebook is also proposed **tutorial.ipynb**. This notebook can be directly run on Google Colab by clicking here :
+A tutorial notebook is also proposed **tutorial.ipynb**. This notebook can be directly run on Google Colab by clicking [here](https://colab.research.google.com/github/AmedeeRoy/BirdGAN/blob/master/tutorial.ipynb)
 
