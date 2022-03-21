@@ -1,9 +1,8 @@
+[![DOI](https://zenodo.org/badge/304295763.svg)](https://zenodo.org/badge/latestdoi/304295763)
+
 # BirdGAN
 
-This repository includes code and results for the paper "Generative Adversarial Networks for Simulating Central-Place Foraging Trajectories"
-
-Associated preprint : https://www.biorxiv.org/content/10.1101/2021.09.27.461940v1
-
+This repository includes data and code for the paper "Using Generative Adversarial Networks to Simulate Central-Place Foraging Trajectories"
 
 # Data
 
